@@ -78,7 +78,7 @@ def profile():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
     if current_user[1]['name'] == 'Matteo':
-        response_body['message'] = 'Perfil de Hector, tiene acceso'
+        response_body['message'] = 'Perfil de Irene, tiene acceso'
         print(current_user)
         return response_body, 200
     response_body['message'] = 'Perfil SIN ACCESO'
