@@ -83,3 +83,35 @@ def profile():
         return response_body, 200
     response_body['message'] = 'Perfil SIN ACCESO'
     return response_body, 401
+
+
+# Ruta para dar de alta un usuario
+@api.route("/register", methods=["POST"])
+def register_user():
+    response_body = {}
+    data = request.json
+
+    # Verificar si el email ya está registrado
+    existing_user = User.query.filter_by(email=data['email']).first()
+    if existing_user:
+        return jsonify({"msg": "El email ya está registrado"}), 400
+
+    # Crear un nuevo usuario
+    new_user = User(
+        email=data['email'],
+        password=data['password'],
+        is_active=True  # Puedes ajustar según tus necesidades
+    )
+
+    # Agregar el nuevo usuario a la base de datos
+    db.session.add(new_user)
+    db.session.commit()
+
+    # Crear un token de acceso para el nuevo usuario
+    access_token = create_access_token(identity=new_user.id)
+
+    response_body['msg'] = "Usuario registrado exitosamente"
+    return jsonify({"token": access_token, "user_id": new_user.id}), 201
+
+if __name__ == '__main__':
+    app.run(debug=True)
